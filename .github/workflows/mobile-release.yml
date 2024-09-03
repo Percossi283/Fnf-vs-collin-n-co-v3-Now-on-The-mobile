@@ -12,24 +12,6 @@ jobs:
         with:
           haxe-version: 4.2.5
 
-      - name: Install Libraries
-        run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-
-      - name: Configure Android
-        run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_HOME
-          haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
-          haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
-          haxelib run lime config ANDROID_SETUP true
-
-      - name: Compile
-        run: haxelib run lime build android -D officialBuild -final
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
-        with:
           name: androidBuild
           path: export/release/android/bin/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
@@ -44,29 +26,6 @@ jobs:
         with:
           haxe-version: 4.2.5
 
-      - name: Install Libraries
-        run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-
-      - name: Compile
-        run: haxelib run lime build ios -D officialBuild -nosign -arm64 -final
-
-      - name: Make Ipa
-        run: |
-          cd export/release/ios/build/Release-iphoneos
-          mkdir Payload
-          mv *.app Payload
-          zip -r PsychEngine.ipa Payload
-
-      - name: Make Zip For Release
-        run: |
-           cd export/release/ios/build/Release-iphoneos
-           zip PsychEngine-iOS.zip PsychEngine.ipa
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
-        with:
           name: iOSBuild
           path: export/release/ios/build/Release-iphoneos/*.zip
           if-no-files-found: error
@@ -76,16 +35,18 @@ jobs:
     permissions: write-all
     steps:
       - name: Download Android Build
-        uses: actions/download-artifact@main
+          uses:actions/upload-artifact@v4
+  
         with:
            name: androidBuild
            path: /home/runner
 
       - name: Move Android File
-        run: mv /home/runner/PsychEngine-release.apk /home/runner/PsychEngine-Android.apk
+        run: mv /home/runner/FNF vs Collin N Co.apk /home/runner/PsychEngine-Android.apk
 
       - name: Download iOS Build
-        uses: actions/download-artifact@main
+          uses:actions/upload-artifact@v4
+  
         with:
            name: iOSBuild
            path: /home/runner
